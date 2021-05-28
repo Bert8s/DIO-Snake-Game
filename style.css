@@ -1,0 +1,29 @@
+@font-face {
+  font-family: "8BitStyle";
+  src: url(/fonts/Minecraft.ttf);
+}
+
+body {
+  background-color: rgb(230, 230, 230);
+}
+
+.container {
+  font-family: "8BitStyle";
+  text-align: center;
+  font-size: 35px;
+}
+
+.scores {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin-inline: 10%;
+  align-items: center;
+  margin: 10px;
+
+  font-size: 40px;
+}
+
+.score {
+  margin: 5px;
+}

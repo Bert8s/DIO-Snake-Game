@@ -13,6 +13,13 @@ let canvas = document.getElementById("snake");
 let context = canvas.getContext("2d");
 let box = 32;
 let direction = "right";
+let changeDirection = true;
+let score = 0;
+let highScore = 0;
+
+//Inicializa os contadores para a pontuação
+document.getElementById("score").innerHTML = 0;
+document.getElementById("high-score").innerHTML = 0;
 
 //Objeto cobrinha
 let snake = [];
@@ -29,7 +36,7 @@ let food = {
 
 //Função para criar o campo de jogo
 function createBG() {
-  context.fillStyle = "lightgreen";
+  context.fillStyle = "#E1A95F";
   context.fillRect(0, 0, 16 * box, 16 * box);
 }
 
@@ -41,9 +48,9 @@ function createSnake() {
   }
 }
 
-//Função para criar a comida
+//Função para criar a comida no campo de jogo
 function placeFood() {
-  context.fillStyle = "orange";
+  context.fillStyle = "red";
   context.fillRect(food.x, food.y, box, box);
 }
 
@@ -53,12 +60,15 @@ document.addEventListener("keyup", update);
 document.addEventListener("keyleft", update);
 document.addEventListener("keyright", update);
 
-//Função para mudar direção. Ela é chamada quando um dos botões de direção é apertado
+//Função para mudar direção. Ela é chamada quando um dos botões de direção é apertado. A bool 'Changedirection' é usado para ter a certeza de que a cobra só vai poder efetuar um giro de 180 graus em dois movimentos como máximo.
 function update(event) {
-  if (event.keyCode == 37 && direction != "right") direction = "left";
-  if (event.keyCode == 38 && direction != "down") direction = "up";
-  if (event.keyCode == 39 && direction != "left") direction = "right";
-  if (event.keyCode == 40 && direction != "up") direction = "down";
+  if (changeDirection == true) {
+    if (event.keyCode == 37 && direction != "right") direction = "left";
+    if (event.keyCode == 38 && direction != "down") direction = "up";
+    if (event.keyCode == 39 && direction != "left") direction = "right";
+    if (event.keyCode == 40 && direction != "up") direction = "down";
+    changeDirection = false;
+  }
 }
 
 //Função para iniciar o jogo
@@ -67,6 +77,12 @@ function startGame() {
   if (snake.length > 1) {
     for (i = 1; i < snake.length; i++) {
       if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+        if (score >= highScore) {
+          highScore = score;
+          console.log("High Score: ", highScore);
+        }
+        document.getElementById("high-score").innerHTML = highScore;
+
         clearInterval(jogo);
         alert("Game Over ;__(");
       }
@@ -94,6 +110,8 @@ function startGame() {
   } else {
     food.x = Math.floor(Math.random() * 16) * box;
     food.y = Math.floor(Math.random() * 16) * box;
+    score += 5;
+    document.getElementById("score").innerHTML = score;
   }
 
   //Objeto para recever as coordenadas atualizadas da cabeça da cobrinha
@@ -104,6 +122,9 @@ function startGame() {
 
   //Adiciona as coordenadas atuais da cabeça da cobra na array snake
   snake.unshift(newHead);
+
+  //Reseteamos o valor bool para true
+  changeDirection = true;
 
   //Condições para fazer sair a cobra no lado oposto do campo no caso que ela sair do límite
   if (snake[0].x > 15 * box && direction == "right") snake[0].x = 0;
