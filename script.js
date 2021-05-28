@@ -63,6 +63,16 @@ function update(event) {
 
 //Função para iniciar o jogo
 function startGame() {
+  //Se o tamano da cobrinha é maior de 1
+  if (snake.length > 1) {
+    for (i = 1; i < snake.length; i++) {
+      if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+        clearInterval(jogo);
+        alert("Game Over ;__(");
+      }
+    }
+  }
+
   //Chama as funções para criar o campo de jogo, a cobrinha e a comida.
   createBG();
   createSnake();
@@ -95,14 +105,13 @@ function startGame() {
   //Adiciona as coordenadas atuais da cabeça da cobra na array snake
   snake.unshift(newHead);
 
-  //console.log(snakeX, snakeY);
-
   //Condições para fazer sair a cobra no lado oposto do campo no caso que ela sair do límite
   if (snake[0].x > 15 * box && direction == "right") snake[0].x = 0;
   if (snake[0].y > 15 * box && direction == "down") snake[0].y = 0;
   if (snake[0].x < 0 && direction == "left") snake[0].x = 15 * box;
   if (snake[0].y < 0 && direction == "up") snake[0].y = 15 * box;
 }
+//console.log(snakeX, snakeY);
 
 //Intervalo de execução da função startGame
 let jogo = setInterval(startGame, 100);
