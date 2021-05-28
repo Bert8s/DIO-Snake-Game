@@ -12,8 +12,15 @@ let canvas = document.getElementById("snake");
 let context = canvas.getContext("2d");
 let box = 32;
 
+let foodOnPlace = false;
+
 let snake = [];
 snake[0] = {
+  x: 8 * box,
+  y: 8 * box,
+};
+
+let food = {
   x: 8 * box,
   y: 8 * box,
 };
@@ -34,6 +41,17 @@ function createSnake() {
   }
 }
 
+//Função para criar a comida
+function placeFood() {
+  if (foodOnPlace == false) {
+    food.x = Math.floor(Math.random() * 16) * box;
+    food.y = Math.floor(Math.random() * 16) * box;
+    foodOnPlace = true;
+  }
+  context.fillStyle = "orange";
+  context.fillRect(food.x, food.y, box, box);
+}
+
 document.addEventListener("keydown", update);
 document.addEventListener("keyup", update);
 document.addEventListener("keyleft", update);
@@ -49,8 +67,9 @@ function update(event) {
 function startGame() {
   createBG();
   createSnake();
+  placeFood();
 
-  console.log(snake[0].x, snake[0].y);
+  //console.log(snake[0].x, snake[0].y);
 
   let snakeX = snake[0].x;
   let snakeY = snake[0].y;
