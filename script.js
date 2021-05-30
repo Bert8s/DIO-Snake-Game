@@ -1,18 +1,19 @@
 /* NOTAS:
 
+Falta fazer um refactoring do código. Por exemplo deixar somente uma função para permitir a inicialização do jogo cada vez. Não somente no começo, também se o jogador quer jogar um novo jogo 
+
 context.fillRect(x, y, width, height)
     x = The x-coordinate of the upper-left corner of the rectangle	
     y = The y-coordinate of the upper-left corner of the rectangle	
     width = The width of the rectangle, in pixels	
     height = The height of the rectangle, in pixels
-
 */
 
 //Inicializações
 let canvas = document.getElementById("snake");
 let context = canvas.getContext("2d");
 let box = 32;
-let direction = "right";
+let direction = "down";
 let changeDirection = true;
 let score = 0;
 let highScore = 0;
@@ -71,20 +72,62 @@ function update(event) {
   }
 }
 
+//Função para iniciar um novo jogo
+function startNewGame() {
+  //Inicializando de novo as variáveis
+  direction = "down";
+  changeDirection = true;
+  score = 0;
+  document.getElementById("score").innerHTML = 0;
+  //Criando posição da comida
+  food.x = Math.floor(Math.random() * 16) * box;
+  food.y = Math.floor(Math.random() * 16) * box;
+
+  //Deixando só a posição da cabeça
+  while (snake.length > 1) {
+    snake.pop();
+  }
+  //Colocando a cabeça na posição inicial
+  snake[0].x = 256;
+  snake[0].y = 256;
+  context.fillRect(snake[0].x, snake[0].y, box, box);
+
+  //Inicializando o intervalo de execução novamente
+  jogo = setInterval(startGame, 100);
+}
+
 //Função para iniciar o jogo
 function startGame() {
+  //Condições para fazer sair a cobra no lado oposto do campo no caso que ela sair do límite
+  if (snake[0].x > 15 * box && direction == "right") snake[0].x = 0;
+  if (snake[0].y > 15 * box && direction == "down") snake[0].y = 0;
+  if (snake[0].x < 0 && direction == "left") snake[0].x = 15 * box;
+  if (snake[0].y < 0 && direction == "up") snake[0].y = 15 * box;
+
   //Se o tamano da cobrinha é maior de 1
   if (snake.length > 1) {
+    //Laço para verificar as posições do corpo da cobrinha
     for (i = 1; i < snake.length; i++) {
+      //Comparamos se alguma das posições do corpo coincide com a posição da cabeça. Se coincide significa que colidiu.
       if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+        //Guardamos a puntuação no caso fosse melhor que mais alta
         if (score >= highScore) {
           highScore = score;
           console.log("High Score: ", highScore);
         }
+        //Mostramos a pontuação
         document.getElementById("high-score").innerHTML = highScore;
-
+        //Paramos o jogo
         clearInterval(jogo);
+        //Damos a mensagem de "Game Over"
         alert("Game Over ;__(");
+
+        //Opção para o jogador iniciar um novo jogo. No caso ele aperte uma tecla qualquer:
+        let x = prompt("Digite qualquer tecla para começar de novo o jogo:");
+
+        if (typeof x == "string") {
+          startNewGame();
+        }
       }
     }
   }
@@ -98,21 +141,35 @@ function startGame() {
   let snakeX = snake[0].x;
   let snakeY = snake[0].y;
 
-  //Dependendo da direção modifica as variavéis das coordenadas da cobra
-  if (direction == "right") snakeX += box;
-  if (direction == "left") snakeX -= box;
-  if (direction == "down") snakeY += box;
-  if (direction == "up") snakeY -= box;
+  //console.log(snakeX, snakeY, food.x, food.y);
 
   //Tira a última parte da cobra (posição da array snake) no caso que as coordenadas sejam diferentes
   if (snakeX != food.x || snakeY != food.y) {
     snake.pop();
   } else {
     food.x = Math.floor(Math.random() * 16) * box;
+
+    for (i = 0; i < snake.length; i++) {
+      if (food.x == snake[i].x) {
+      }
+    }
+
     food.y = Math.floor(Math.random() * 16) * box;
     score += 5;
     document.getElementById("score").innerHTML = score;
   }
+
+  //Dependendo da direção modifica as variavéis das coordenadas da cobra
+  if (direction == "right") snakeX += box;
+  if (direction == "left") snakeX -= box;
+  if (direction == "down") snakeY += box;
+  if (direction == "up") snakeY -= box;
+
+  //Arrumando um problema de um jeito pouco ótimo...
+  if (snakeX < 0) snakeX = 480;
+  if (snakeY < 0) snakeY = 480;
+  if (snakeX > 480) snakeX = 0;
+  if (snakeY > 480) snakeY = 0;
 
   //Objeto para recever as coordenadas atualizadas da cabeça da cobrinha
   let newHead = {
@@ -125,14 +182,7 @@ function startGame() {
 
   //Reseteamos o valor bool para true
   changeDirection = true;
-
-  //Condições para fazer sair a cobra no lado oposto do campo no caso que ela sair do límite
-  if (snake[0].x > 15 * box && direction == "right") snake[0].x = 0;
-  if (snake[0].y > 15 * box && direction == "down") snake[0].y = 0;
-  if (snake[0].x < 0 && direction == "left") snake[0].x = 15 * box;
-  if (snake[0].y < 0 && direction == "up") snake[0].y = 15 * box;
 }
-//console.log(snakeX, snakeY);
 
 //Intervalo de execução da função startGame
-let jogo = setInterval(startGame, 100);
+let jogo = setInterval(startGame, 0200);

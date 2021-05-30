@@ -5,6 +5,10 @@
 
 body {
   background-color: rgb(230, 230, 230);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .container {
@@ -14,11 +18,8 @@ body {
 }
 
 .scores {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
   margin-inline: 10%;
-  align-items: center;
+
   margin: 10px;
 
   font-size: 40px;
